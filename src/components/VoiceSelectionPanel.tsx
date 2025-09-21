@@ -108,20 +108,25 @@ export default function VoiceSelectionPanel({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border flex items-center justify-between">
-          <button
-            onClick={onClose}
-            className="btn-secondary"
-          >
-            取消
-          </button>
-          <button
-            onClick={handleApplyClick}
-            disabled={!hasChanges}
-            className="btn-primary"
-          >
-            应用音色
-          </button>
+        <div className="p-4 border-t border-border">
+          <div className="text-xs text-text-secondary mb-3 text-center">
+            点击“应用音色”后将自动开始生成音频，请耐心等待
+          </div>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={onClose}
+              className="btn-secondary"
+            >
+              取消
+            </button>
+            <button
+              onClick={handleApplyClick}
+              disabled={!hasChanges}
+              className="btn-primary"
+            >
+              应用音色
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,19 +1,25 @@
 import { VoiceOption } from '@/types';
 
-// 默认音色选项
+// 火山引擎TTS支持的音色选项
 export const VOICE_OPTIONS: VoiceOption[] = [
-  { id: 'BV040_streaming', name: '美式女声-Anna', gender: 'female' },
-  { id: 'BV002_streaming', name: '美式男声-John', gender: 'male' },
-  { id: 'BV001_streaming', name: '英式女声-Emma', gender: 'female' },
-  { id: 'BV003_streaming', name: '英式男声-James', gender: 'male' },
-  { id: 'BV004_streaming', name: '澳式女声-Sophia', gender: 'female' },
-  { id: 'BV005_streaming', name: '澳式男声-Oliver', gender: 'male' },
+  { id: 'BV511_streaming', name: '慵懒女声 - Ava', gender: 'female' },
+  { id: 'BV505_streaming', name: '议论女声 - Alicia', gender: 'female' },
+  { id: 'BV138_streaming', name: '情感女声 - Lawrence', gender: 'female' },
+  { id: 'BV027_streaming', name: '美式女声 - Amelia', gender: 'female' },
+  { id: 'BV502_streaming', name: '讲述女声 - Amanda', gender: 'female' },
+  { id: 'BV503_streaming', name: '活力女声 - Ariana', gender: 'female' },
+  { id: 'BV504_streaming', name: '活力男声 - Jackson', gender: 'male' },
+  { id: 'BV421_streaming', name: '天才少女', gender: 'female' },
+  { id: 'BV702_streaming', name: 'Stefan', gender: 'male' },
+  { id: 'BV506_streaming', name: '天真萌娃 - Lily', gender: 'female' },
+  { id: 'BV040_streaming', name: '亲切女声 - Anna', gender: 'female' },
+  { id: 'BV516_streaming', name: '澳洲男声 - Henry', gender: 'male' },
 ];
 
 // 默认音色配置
 export const DEFAULT_VOICE_CONFIG = {
-  A: VOICE_OPTIONS[0], // 美式女声-Anna
-  B: VOICE_OPTIONS[1], // 美式男声-John
+  A: VOICE_OPTIONS[0], // 慵懒女声 - Ava
+  B: VOICE_OPTIONS[6], // 活力男声 - Jackson
 };
 
 // localStorage 键名

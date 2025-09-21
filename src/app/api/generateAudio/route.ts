@@ -1,5 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GenerateAudioRequest, GenerateAudioResponse } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
+
+interface VolcanoTTSRequest {
+  app: {
+    appid: string;
+    token: string;
+    cluster: string;
+  };
+  user: {
+    uid: string;
+  };
+  audio: {
+    voice_type: string;
+    encoding: string;
+    speed_ratio: number;
+    volume_ratio: number;
+    pitch_ratio: number;
+  };
+  request: {
+    reqid: string;
+    text: string;
+    text_type: string;
+    operation: string;
+    with_frontend: number;
+    frontend_type: string;
+  };
+}
+
+interface VolcanoTTSResponse {
+  message: string;
+  code: number;
+  operation: string;
+  sequence: number;
+  data?: string; // base64 encoded audio data
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,18 +50,92 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 这里应该调用真实的TTS API，比如Azure Speech Service
-    // 由于演示目的，我们返回一个模拟的音频URL
-    // 在实际项目中，你需要：
-    // 1. 调用TTS API生成音频
-    // 2. 将音频保存到云存储或本地文件系统
-    // 3. 返回音频的公开访问URL
+    // 获取火山引擎配置
+    const appid = process.env.VOLCANO_APPID;
+    const accessToken = process.env.VOLCANO_ACCESS_TOKEN;
+    const cluster = process.env.VOLCANO_CLUSTER || 'volcano_tts';
+    const host = process.env.VOLCANO_HOST || 'openspeech.bytedance.com';
 
-    // 模拟TTS API调用延迟
-    await new Promise(resolve => setTimeout(resolve, 500));
+    if (!appid || !accessToken) {
+      console.error('Missing Volcano TTS configuration');
+      return NextResponse.json(
+        { error: '服务配置错误，请联系管理员' },
+        { status: 500 }
+      );
+    }
 
-    // 模拟音频URL - 在实际项目中这应该是真实的音频文件URL
-    const audioUrl = `data:audio/mp3;base64,/+MYxAAEaAIEeUAQAgBgNgP/////KQQ/////Lvrg+lcWYHgtjadzsbTq+yREu495tq9c6v/7zub/+MYxCgFmAH8eUAQAAABQp/9Jb1////+r5ptzZr/7IZIAmZe5HZAAAAAAAAABwAAAAAAAAAAAAAAAAAA`; // 空白音频
+    // 构建火山引擎TTS请求
+    const apiUrl = `https://${host}/api/v1/tts`;
+    const headers = {
+      'Authorization': `Bearer;${accessToken}`,
+      'Content-Type': 'application/json'
+    };
+
+    const requestJson: VolcanoTTSRequest = {
+      app: {
+        appid: appid,
+        token: 'access_token',
+        cluster: cluster
+      },
+      user: {
+        uid: '388808087185088'
+      },
+      audio: {
+        voice_type: voice,
+        encoding: 'mp3',
+        speed_ratio: 1.0,
+        volume_ratio: 1.0,
+        pitch_ratio: 1.0,
+      },
+      request: {
+        reqid: uuidv4(),
+        text: text,
+        text_type: 'plain',
+        operation: 'query',
+        with_frontend: 1,
+        frontend_type: 'unitTson'
+      }
+    };
+
+    console.log('Calling Volcano TTS API with:', {
+      url: apiUrl,
+      voice: voice,
+      textLength: text.length
+    });
+
+    // 调用火山引擎TTS API
+    const volcanoResponse = await fetch(apiUrl, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestJson),
+    });
+
+    if (!volcanoResponse.ok) {
+      const errorText = await volcanoResponse.text();
+      console.error('Volcano TTS API Error:', volcanoResponse.status, errorText);
+      return NextResponse.json(
+        { error: '音频生成失败，请稍后重试' },
+        { status: 500 }
+      );
+    }
+
+    const volcanoData: VolcanoTTSResponse = await volcanoResponse.json();
+    console.log('Volcano TTS Response:', {
+      code: volcanoData.code,
+      message: volcanoData.message,
+      hasData: !!volcanoData.data
+    });
+
+    if (volcanoData.code !== 3000 || !volcanoData.data) {
+      console.error('Volcano TTS failed:', volcanoData.message);
+      return NextResponse.json(
+        { error: `音频生成失败: ${volcanoData.message}` },
+        { status: 500 }
+      );
+    }
+
+    // 返回base64编码的音频数据作为data URL
+    const audioUrl = `data:audio/mp3;base64,${volcanoData.data}`;
 
     const response: GenerateAudioResponse = {
       url: audioUrl,
@@ -36,51 +145,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Generate audio error:', error);
     return NextResponse.json(
-      { error: '音频生成失败' },
+      { error: '音频生成失败，请检查网络连接' },
       { status: 500 }
     );
   }
 }
-
-// 以下是使用Azure Speech Service的示例代码（需要安装相关包）
-/*
-import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
-
-export async function generateAudioWithAzure(text: string, voice: string): Promise<string> {
-  const speechConfig = sdk.SpeechConfig.fromSubscription(
-    process.env.AZURE_SPEECH_KEY!,
-    process.env.AZURE_SPEECH_REGION!
-  );
-  
-  speechConfig.speechSynthesisVoiceName = voice;
-  speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
-
-  const synthesizer = new sdk.SpeechSynthesizer(speechConfig);
-  
-  return new Promise((resolve, reject) => {
-    synthesizer.speakTextAsync(
-      text,
-      (result) => {
-        if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
-          // 保存音频文件
-          const fileName = `audio_${Date.now()}.mp3`;
-          const filePath = join(process.cwd(), 'public', 'audio', fileName);
-          writeFileSync(filePath, Buffer.from(result.audioData));
-          
-          // 返回公开访问URL
-          resolve(`/audio/${fileName}`);
-        } else {
-          reject(new Error('Audio synthesis failed'));
-        }
-        synthesizer.close();
-      },
-      (error) => {
-        synthesizer.close();
-        reject(error);
-      }
-    );
-  });
-}
-*/
