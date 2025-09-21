@@ -1,35 +1,47 @@
-# AI 英语对话生成与朗读应用
+# 🎭 AI英语对话生成与语音合成应用
 
-一款极致简洁、高度客制化的 AI 英语对话学习工具，让学习者通过自己感兴趣的单词，生成贴近真实生活、可反复聆听的沉浸式学习材料。
+一个基于AI的英语对话生成工具，支持多角色语音合成和个性化音色配置。通过输入英语单词，自动生成真实自然的英语对话，并为不同角色配置专属音色，实现高质量的语音播放体验。
 
-## ✨ 特性
+## ✨ 核心特性
 
-### 🎯 核心功能
-- **智能对话生成**: 基于DeepSeek AI，根据用户输入的单词生成自然、地道的英语对话
-- **多音色朗读**: 支持美式、英式、澳式等多种口音的男女声
-- **灵活播放控制**: 支持全局播放、单句重复、语速调节等功能
-- **本地数据管理**: 所有数据存储在浏览器本地，隐私安全
+### 🤖 智能对话生成
+- **AI驱动**：基于DeepSeek Reasoner模型，生成地道自然的英语对话
+- **单词驱动**：输入英语单词，自动构建包含这些词汇的对话场景
+- **多主题支持**：根据词汇内容智能生成多个相关对话主题
+- **生活化场景**：专注于日常交流场景，贴近实际使用
 
-### 📱 用户体验
-- **响应式设计**: 完美适配桌面端和移动端
-- **简洁界面**: 直观的操作流程，专注学习体验
-- **实时反馈**: 音频生成状态、播放进度等实时显示
+### 🎵 个性化语音合成
+- **双角色配音**：为对话中的A、B角色分别配置不同音色
+- **12种音色选择**：涵盖男声、女声，不同风格和口音
+- **批量音频生成**：一键为整个对话生成高质量MP3音频
+- **智能并发控制**：优化API调用，确保稳定的音频生成
 
-### 🔐 安全特性
-- **客户端API Key管理**: API密钥仅存储在用户浏览器中
-- **无服务端存储**: 不收集或存储用户的任何个人数据
+### 🎯 用户体验优化
+- **无跳转生成**：在当前页面直接显示生成的对话内容
+- **实时音频播放**：支持单句播放和连续播放
+- **播放速度调节**：0.5x到2.0x的播放速度选择
+- **对话历史管理**：自动保存历史记录，支持删除和重命名
+
+### 🎨 现代化界面
+- **响应式设计**：适配桌面和移动设备
+- **左右分栏布局**：左侧历史记录，右侧主工作区
+- **滑出式面板**：优雅的音色配置界面
+- **实时状态反馈**：清晰的加载状态和进度提示
 
 ## 🚀 快速开始
 
 ### 环境要求
-- Node.js 18+ 
+
+- Node.js 18+
 - npm 或 yarn
+- DeepSeek API Key
+- 火山引擎 TTS API 权限
 
 ### 安装步骤
 
 1. **克隆项目**
 ```bash
-git clone <repository-url>
+git clone https://github.com/aisheep7434/english-dialogue-ai.git
 cd english-dialogue-ai
 ```
 
@@ -40,125 +52,227 @@ npm install
 yarn install
 ```
 
-3. **启动开发服务器**
+3. **配置环境变量**
+```bash
+cp .env.example .env.local
+```
+
+编辑 `.env.local` 文件，填入你的API密钥：
+```env
+# AI对话生成API Key (DeepSeek)
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+
+# 火山引擎TTS配置
+VOLCANO_APPID=6832718077
+VOLCANO_ACCESS_TOKEN=your_volcano_access_token_here
+VOLCANO_CLUSTER=volcano_tts
+VOLCANO_HOST=openspeech.bytedance.com
+```
+
+4. **启动开发服务器**
 ```bash
 npm run dev
 # 或
 yarn dev
 ```
 
-4. **访问应用**
+5. **访问应用**
+
 打开浏览器访问 [http://localhost:3000](http://localhost:3000)
-
-### 配置API Key
-
-1. 注册 [DeepSeek](https://platform.deepseek.com/) 账户
-2. 获取API Key
-3. 在应用右上角点击设置图标
-4. 输入并保存您的API Key
 
 ## 📖 使用指南
 
-### 生成对话
-1. 在主页输入框中输入想学习的英文单词（至少2个）
-2. 单词之间用逗号或空格分隔
-3. 点击"生成对话"按钮
-4. 等待AI生成完成后自动跳转到播放页面
+### 基本使用流程
 
-### 播放控制
-- **一键播放**: 按顺序播放整段对话
-- **单句播放**: 点击每句旁边的播放按钮
-- **语速调节**: 支持0.5x - 1.5x倍速播放
-- **音色切换**: 为A、B角色选择不同的声音
+1. **输入单词**
+   - 在主页输入框中输入英语单词（至少2个）
+   - 支持逗号、空格分隔
+   - 例如：`coffee, meeting, schedule, weekend`
 
-### 历史管理
-- 所有生成的对话会自动保存到本地
-- 支持重命名和删除对话记录
-- 移动端显示最近的3个对话快捷入口
+2. **生成对话**
+   - 点击"生成"按钮
+   - AI将在当前页面生成包含这些单词的对话
+   - 可能生成一个或多个相关对话主题
+
+3. **配置音色**
+   - 点击"音色选择"按钮
+   - 为角色A和角色B选择不同的音色
+   - 12种音色可选：慵懒女声、活力男声等
+
+4. **生成语音**
+   - 在音色面板中点击"生成语音"按钮
+   - 系统将为所有对话语句生成音频
+   - 支持批量处理，自动控制并发
+
+5. **播放体验**
+   - 使用"一键播放"连续播放整个对话
+   - 点击单句的播放按钮播放特定语句
+   - 调节播放速度（0.5x - 2.0x）
+
+### 高级功能
+
+- **对话管理**：在左侧历史记录中查看、删除、重命名历史对话
+- **详细页面**：点击"详细页面"按钮获得完整的播放控制体验
+- **数据持久化**：所有对话和配置自动保存到本地存储
 
 ## 🛠️ 技术架构
 
-### 前端技术栈
-- **Next.js 14**: React全栈框架，使用App Router
-- **TypeScript**: 类型安全的JavaScript
-- **Tailwind CSS**: 原子化CSS框架
-- **Lucide React**: 现代图标库
+### 技术栈
 
-### 后端API
-- **Next.js API Routes**: 服务端API处理
-- **DeepSeek API**: AI对话生成
-- **本地存储**: 浏览器localStorage
+- **前端框架**：Next.js 14 (App Router)
+- **语言**：TypeScript
+- **样式**：Tailwind CSS
+- **图标**：Lucide React
+- **状态管理**：React Hooks
+- **数据存储**：localStorage
 
-### 响应式设计
-- 移动优先的设计理念
-- 完整的移动端适配
-- 桌面端增强功能
+### API服务
 
-## 📁 项目结构
+- **对话生成**：DeepSeek Reasoner API
+- **语音合成**：火山引擎 TTS API
+- **音频格式**：MP3 (Base64编码)
+
+### 项目结构
 
 ```
 src/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API路由
-│   │   ├── generateDialogue/
-│   │   └── generateAudio/
-│   ├── dialogue/[id]/     # 对话播放页面
+│   │   ├── generateDialogue/ # 对话生成API
+│   │   └── generateAudio/    # 音频生成API
+│   ├── dialogue/[id]/     # 对话详情页
+│   ├── dialogues/[ids]/   # 多对话展示页
 │   ├── globals.css        # 全局样式
 │   ├── layout.tsx         # 根布局
 │   └── page.tsx          # 主页
 ├── components/            # React组件
-│   ├── ApiKeyManager.tsx
-│   ├── DialogueHistoryItem.tsx
-│   ├── DialogueLineComponent.tsx
-│   ├── PlayerControls.tsx
-│   └── VoiceSelectionPanel.tsx
-├── lib/                   # 工具函数和常量
-│   └── constants.ts
-└── types/                 # TypeScript类型定义
-    └── index.ts
+│   ├── ApiKeyManager.tsx      # API密钥管理
+│   ├── DialogueHistoryItem.tsx # 对话历史项
+│   ├── DialogueLineComponent.tsx # 对话行组件
+│   ├── PlayerControls.tsx      # 播放控制
+│   └── VoiceSelectionPanel.tsx # 音色选择面板
+├── lib/
+│   └── constants.ts       # 常量配置
+└── types/
+    └── index.ts          # TypeScript类型定义
 ```
+
+## 🎨 支持的音色
+
+项目集成了12种高质量英语音色：
+
+### 女声音色
+- **慵懒女声 - Ava** (BV511_streaming)
+- **议论女声 - Alicia** (BV505_streaming)
+- **情感女声 - Lawrence** (BV138_streaming)
+- **美式女声 - Amelia** (BV027_streaming)
+- **讲述女声 - Amanda** (BV502_streaming)
+- **活力女声 - Ariana** (BV503_streaming)
+- **天才少女** (BV421_streaming)
+- **天真萌娃 - Lily** (BV506_streaming)
+- **亲切女声 - Anna** (BV040_streaming)
+
+### 男声音色
+- **活力男声 - Jackson** (BV504_streaming)
+- **Stefan** (BV702_streaming)
+- **澳洲男声 - Henry** (BV516_streaming)
 
 ## 🔧 配置说明
 
-### 支持的音色
-- **美式英语**: Anna(女), John(男)
-- **英式英语**: Emma(女), James(男) 
-- **澳式英语**: Sophia(女), Oliver(男)
+### API密钥获取
 
-### 本地存储键名
-- `deepseek_api_key`: DeepSeek API密钥
-- `voice_config`: 音色配置
-- `dialogues`: 对话历史记录
+1. **DeepSeek API Key**
+   - 访问 [DeepSeek 开放平台](https://platform.deepseek.com/)
+   - 注册账号并获取API Key
+   - 确保有足够的API调用余额
+
+2. **火山引擎 TTS API**
+   - 访问 [火山引擎控制台](https://console.volcengine.com/)
+   - 开通语音技术服务
+   - 获取APP ID和Access Token
+
+### 环境变量详解
+
+```env
+# 必需 - DeepSeek API密钥，用于AI对话生成
+DEEPSEEK_API_KEY=sk-xxx
+
+# 必需 - 火山引擎应用ID
+VOLCANO_APPID=6832718077
+
+# 必需 - 火山引擎访问令牌
+VOLCANO_ACCESS_TOKEN=xxx
+
+# 可选 - 火山引擎集群配置（默认值可用）
+VOLCANO_CLUSTER=volcano_tts
+VOLCANO_HOST=openspeech.bytedance.com
+```
+
+## 📦 部署指南
+
+### Vercel部署（推荐）
+
+1. **连接GitHub仓库**
+   - 在Vercel中导入GitHub仓库
+   - 选择Next.js框架预设
+
+2. **配置环境变量**
+   - 在Vercel项目设置中添加环境变量
+   - 添加上述所有必需的API密钥
+
+3. **部署**
+   - Vercel将自动构建和部署
+   - 每次push到main分支都会自动重新部署
+
+### 手动部署
+
+```bash
+# 构建生产版本
+npm run build
+
+# 启动生产服务器
+npm run start
+```
 
 ## 🤝 贡献指南
 
-欢迎提交Issue和Pull Request！
+我们欢迎各种形式的贡献！
 
 ### 开发流程
+
 1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建Pull Request
+2. 创建功能分支：`git checkout -b feature/amazing-feature`
+3. 提交更改：`git commit -m 'Add some amazing feature'`
+4. 推送分支：`git push origin feature/amazing-feature`
+5. 提交Pull Request
+
+### 代码规范
+
+- 使用TypeScript编写类型安全的代码
+- 遵循ESLint和Prettier配置
+- 组件名使用PascalCase
+- 文件名使用camelCase
+- 提交信息使用英文，格式：`type: description`
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+本项目采用MIT许可证。详见 [LICENSE](LICENSE) 文件。
 
 ## 🙏 致谢
 
-- [DeepSeek](https://platform.deepseek.com/) - 提供AI对话生成能力
-- [Next.js](https://nextjs.org/) - 优秀的React框架
-- [Tailwind CSS](https://tailwindcss.com/) - 高效的CSS框架
-- [Lucide](https://lucide.dev/) - 美观的图标库
+- [DeepSeek](https://www.deepseek.com/) - 提供强大的AI对话生成能力
+- [火山引擎](https://www.volcengine.com/) - 提供高质量的TTS语音合成服务
+- [Next.js](https://nextjs.org/) - 现代化的React框架
+- [Tailwind CSS](https://tailwindcss.com/) - 实用优先的CSS框架
+- [Lucide](https://lucide.dev/) - 精美的图标库
 
-## 📞 支持
+## 📞 联系我们
 
-如有问题或建议，请通过以下方式联系：
+如果你有任何问题或建议，欢迎：
 
-- 提交 [Issue](https://github.com/your-username/english-dialogue-ai/issues)
-- 发送邮件至: your-email@example.com
+- 提交 [GitHub Issue](https://github.com/aisheep7434/english-dialogue-ai/issues)
+- 发起 [Discussion](https://github.com/aisheep7434/english-dialogue-ai/discussions)
 
 ---
 
-⭐ 如果这个项目对您有帮助，请给我们一个Star！
+⭐ 如果这个项目对你有帮助，请给我们一个星标！
