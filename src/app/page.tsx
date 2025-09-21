@@ -64,15 +64,26 @@ export default function HomePage() {
         throw new Error(data.error || '生成失败');
       }
 
-      const newDialogue = data.dialogue;
+      const newDialogues = data.dialogues || (data.dialogue ? [data.dialogue] : []);
       
-      // 保存对话到本地存储
-      const updatedDialogues = [newDialogue, ...dialogues];
+      if (newDialogues.length === 0) {
+        throw new Error('生成的对话为空');
+      }
+      
+      // 保存所有对话到本地存储
+      const updatedDialogues = [...newDialogues, ...dialogues];
       setDialogues(updatedDialogues);
       utils.saveToStorage(STORAGE_KEYS.DIALOGUES, updatedDialogues);
 
-      // 跳转到对话页面
-      router.push(`/dialogue/${newDialogue.id}`);
+      // 根据生成的对话数量决定跳转逻辑
+      if (newDialogues.length === 1) {
+        // 只有一个对话，直接跳转到对话页面
+        router.push(`/dialogue/${newDialogues[0].id}`);
+      } else {
+        // 多个对话，跳转到多对话展示页面
+        const dialogueIds = newDialogues.map((d: Dialogue) => d.id).join(',');
+        router.push(`/dialogues/${dialogueIds}`);
+      }
       
     } catch (error: any) {
       console.error('Generate dialogue error:', error);

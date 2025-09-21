@@ -5,6 +5,7 @@ export interface DialogueLine {
   text: string;
   audioUrl?: string; // 音频 URL，初始为空
   isLoadingAudio: boolean; // 是否正在加载此句音频
+  isTitle?: boolean; // 是否为标题行（用于多对话分隔）
 }
 
 // 描述一个完整的对话主题
@@ -46,7 +47,8 @@ export interface ApiResponse<T> {
 
 // 生成对话 API 响应
 export interface GenerateDialogueResponse {
-  dialogue: Dialogue;
+  dialogue?: Dialogue; // 单个对话（向后兼容）
+  dialogues?: Dialogue[]; // 多个对话
 }
 
 // 生成音频 API 响应

@@ -82,7 +82,7 @@ ${words.join(', ')}`;
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-reasoner',
         messages: [
           {
             role: 'user',
@@ -129,46 +129,60 @@ ${words.join(', ')}`;
     }
 
     // 转换为我们的数据格式
-    const dialogueId = utils.generateId();
-    const lines: DialogueLine[] = [];
-    let allWordsUsed: string[] = [];
+    const dialogues: Dialogue[] = [];
 
     // 处理多个对话或单个对话
     if (Array.isArray(dialoguesData) && dialoguesData.length > 0) {
-      // 取第一个对话作为主要对话
-      const firstDialogue = dialoguesData[0];
-      const content = firstDialogue['Dialogue content'] || '';
-      const wordsUsed = firstDialogue['Words Used'] || [];
-      
-      // 解析对话内容
-      const dialogueLines = content.split('\n').filter((line: string) => line.trim());
-      dialogueLines.forEach((line: string, index: number) => {
-        const match = line.match(/^([AB]):\s*(.+)$/);
-        if (match) {
-          const [, speaker, text] = match;
-          lines.push({
+      // 为每个对话创建独立的对话对象
+      dialoguesData.forEach((dialogueData) => {
+        const content = dialogueData['Dialogue content'] || '';
+        const wordsUsed = dialogueData['Words Used'] || [];
+        const title = dialogueData['Dialogue title'] || '英语对话练习';
+        
+        const lines: DialogueLine[] = [];
+        
+        // 解析对话内容
+        const dialogueLines = content.split('\n').filter((line: string) => line.trim());
+        dialogueLines.forEach((line: string) => {
+          const trimmedLine = line.trim();
+          const match = trimmedLine.match(/^([AB]):\s*(.+)$/);
+          if (match) {
+            const [, speaker, text] = match;
+            lines.push({
+              id: utils.generateId(),
+              speaker: speaker as 'A' | 'B',
+              text: text.trim(),
+              isLoadingAudio: false,
+            });
+          }
+        });
+        
+        // 创建独立的对话对象
+        if (lines.length > 0) {
+          dialogues.push({
             id: utils.generateId(),
-            speaker: speaker as 'A' | 'B',
-            text: text.trim(),
-            isLoadingAudio: false,
+            title: title,
+            lines,
+            wordsUsed: wordsUsed,
+            createdAt: new Date().toISOString(),
           });
         }
       });
-
-      allWordsUsed = wordsUsed;
+    }
+    
+    // 如果没有生成任何对话，创建一个默认对话
+    if (dialogues.length === 0) {
+      dialogues.push({
+        id: utils.generateId(),
+        title: '英语对话练习',
+        lines: [],
+        wordsUsed: words,
+        createdAt: new Date().toISOString(),
+      });
     }
 
-    // 创建对话对象
-    const dialogue: Dialogue = {
-      id: dialogueId,
-      title: dialoguesData[0]?.['Dialogue title'] || '英语对话练习',
-      lines,
-      wordsUsed: allWordsUsed,
-      createdAt: new Date().toISOString(),
-    };
-
     const response: GenerateDialogueResponse = {
-      dialogue,
+      dialogues, // 返回多个对话
     };
 
     return NextResponse.json(response);

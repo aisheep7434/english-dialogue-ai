@@ -75,7 +75,7 @@ export default function DialoguePage({ params }: DialoguePageProps) {
     try {
       const updatedLines = await Promise.all(
         dialogue.lines.map(async (line) => {
-          if (line.audioUrl) return line; // 已有音频，跳过
+          if (line.audioUrl || line.isTitle) return line; // 已有音频或是标题行，跳过
 
           const voice = line.speaker === 'A' ? voiceConfig.A.id : voiceConfig.B.id;
           
@@ -125,7 +125,7 @@ export default function DialoguePage({ params }: DialoguePageProps) {
   const handlePlayAll = async () => {
     if (!dialogue || playerState.isPlaying) return;
 
-    const linesWithAudio = dialogue.lines.filter(line => line.audioUrl);
+    const linesWithAudio = dialogue.lines.filter(line => line.audioUrl && !line.isTitle);
     if (linesWithAudio.length === 0) return;
 
     setPlayerState(prev => ({ ...prev, isPlaying: true }));
@@ -208,14 +208,14 @@ export default function DialoguePage({ params }: DialoguePageProps) {
     if (dialogue) {
       const updatedLines = dialogue.lines.map(line => ({
         ...line,
-        audioUrl: undefined,
+        audioUrl: line.isTitle ? undefined : undefined, // 标题行不需要音频
         isLoadingAudio: false,
       }));
       setDialogue({ ...dialogue, lines: updatedLines });
     }
   };
 
-  const isAllAudioLoaded = dialogue?.lines.every(line => line.audioUrl) ?? false;
+  const isAllAudioLoaded = dialogue?.lines.filter(line => !line.isTitle).every(line => line.audioUrl) ?? false;
 
   if (loading) {
     return (

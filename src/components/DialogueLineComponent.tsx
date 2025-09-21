@@ -45,6 +45,21 @@ export default function DialogueLineComponent({
     }
   };
 
+  // 如果是标题行，显示不同的样式
+  if (line.isTitle) {
+    return (
+      <div className="my-6 first:mt-0">
+        <div className="flex items-center">
+          <div className="flex-1 border-t border-border"></div>
+          <div className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm lg:text-base font-medium">
+            {line.text.replace(/===/g, '').trim()}
+          </div>
+          <div className="flex-1 border-t border-border"></div>
+        </div>
+      </div>
+    );
+  }
+
   const speakerColor = line.speaker === 'A' ? 'text-blue-600' : 'text-green-600';
   const speakerBg = line.speaker === 'A' ? 'bg-blue-50' : 'bg-green-50';
 
